@@ -12,6 +12,9 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GameObject _prefabWallTile;
     [SerializeField] private GameObject _prefabRoadTile;
 
+    [Header("Ball and Road point color")]
+    public Color paintColor;
+
     [HideInInspector] public List<RoadTile> roadTilesList = new List<RoadTile>();
     [HideInInspector] public RoadTile defaultBallRoadTile;
 
