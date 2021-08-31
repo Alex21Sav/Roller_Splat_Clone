@@ -4,6 +4,7 @@ using UnityEngine;
 using GG.Infrastructure.Utils.Swipe;
 using DG.Tweening;
 using System;
+using UnityEngine.Events;
 
 public class BallMovevent : MonoBehaviour
 {
@@ -13,10 +14,12 @@ public class BallMovevent : MonoBehaviour
     [SerializeField] private float stepDuration = 0.1f;
     [SerializeField] private LayerMask WallsAndRoadsLayer;
 
-    private const float MAX_RAY_DISTANCE = 10f;
+    private const float MAX_RAY_DISTANCE = 15f;
 
     private Vector3 _moveDirection;
     private bool canMove = true;
+
+    public event UnityAction<List<RoadTile>, float> onMoveStart;
 
     private void Start()
     {
@@ -54,11 +57,13 @@ public class BallMovevent : MonoBehaviour
 
             int steps = 0;
 
+            List<RoadTile> pathRoadTiles = new List<RoadTile>();
+
             for (int i = 0; i < hits.Length; i++)
             {
                 if (hits[i].collider.isTrigger)
                 {
-
+                    pathRoadTiles.Add(hits[i].transform.GetComponent<RoadTile>());
                 }
                 else
                 {
@@ -76,6 +81,11 @@ public class BallMovevent : MonoBehaviour
 
             float moveDuration = stepDuration * steps;
             transform.DOMove(targetPosition, moveDuration).SetEase(Ease.OutExpo).OnComplete(() => canMove = true);
+
+            if(onMoveStart != null)
+            {
+                onMoveStart.Invoke(pathRoadTiles, moveDuration);
+            }
         }
     }
 }
